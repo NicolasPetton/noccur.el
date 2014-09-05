@@ -39,12 +39,14 @@
 
 (require 'projectile)
 
+;;;###autoload
 (defun noccur-dired (regexp &optional nlines)
   "Perform `multi-occur' with REGEXP in all dired marked files.
 When called with a prefix argument NLINES, display NLINES lines before and after."
   (interactive (occur-read-primary-args))
   (multi-occur (mapcar #'find-file (dired-get-marked-files)) regexp nlines))
 
+;;;###autoload
 (defun noccur-project (regexp &optional nlines)
   "Perform `multi-occur' in the current project files."
   (interactive (occur-read-primary-args))
