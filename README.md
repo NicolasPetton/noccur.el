@@ -3,18 +3,18 @@ noccur.el
 
 Run multi-occur on project/dired files
 
-!! What is this about?
+## What is this about?
 
 `occur-mode` is one of the awesome modes that come builtin with Emacs.
 
 Sometimes I just want to run `multi-occur` on all (or a subdirectory) of a project I'm working on. 
 Used with keyboard macros it makes it a snap to perform modifications on many buffers at once.
 
-!! Requirements
+## Requirements
 
 Projectile is required for the `noccur-project` function, but `noccur-dired` is very similar and doesn't require it.
 
-!! Usage example
+## Usage example
 
 The way I use it is the following:
 
