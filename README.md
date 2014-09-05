@@ -14,6 +14,12 @@ Used with keyboard macros it makes it a snap to perform modifications on many bu
 
 Projectile is required for the `noccur-project` function, but `noccur-dired` is very similar and doesn't require it.
 
+## Contributors
+
+(Yes, this small project has one!)
+
+Damien Cassou http://damiencassou.seasidehosting.st/seaside
+
 ## Usage example
 
 The way I use it is the following:
