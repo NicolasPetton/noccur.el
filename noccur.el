@@ -25,14 +25,14 @@
 
 ;; occur-mode is one of the awesome modes that come builtin with Emacs.
 ;;
-;; Sometimes I just want to run multi-occur on all (or a subdirectory)
-;; of a project I'm working on. Used with keyboard macros it makes it
+;; Sometimes I just want to run multi-occur on all (or a sub-directory)
+;; of a project I'm working on.  Used with keyboard macros it makes it
 ;; a snap to perform modifications on many buffers at once.
 ;; 
 ;; The way I use it is the following:
 
 ;; M-x noccur-project RET foo RET The occur buffer's content can then
-;; be edited with occur-edit-mode (bound to e). To save changes in all
+;; be edited with occur-edit-mode (bound to e).  To save changes in all
 ;; modified buffer and go back to occur-mode press C-c C-c.
 
 ;;; Code:
@@ -48,16 +48,19 @@ When called with a prefix argument NLINES, display NLINES lines before and after
 
 ;;;###autoload
 (defun noccur-project (regexp &optional nlines)
-  "Perform `multi-occur' in the current project files."
+  "Perform `multi-occur' with REGEXP in the current project files.
+When called with a prefix argument NLINES, display NLINES lines before and after."
   (interactive (occur-read-primary-args))
   (let* ((directory (read-directory-name "Search in directory: "))
          (files (if (and directory (not (string= directory (projectile-project-root))))
                     (projectile-files-in-project-directory directory)
                   (projectile-current-project-files)))
-         (buffers (mapcar #'find-file 
+         (buffers (mapcar #'find-file
                           (mapcar #'(lambda (file)
                                       (expand-file-name file (projectile-project-root)))
                                   files))))
     (multi-occur buffers regexp nlines)))
 
 (provide 'noccur)
+
+;;; noccur.el ends here
