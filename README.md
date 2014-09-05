@@ -18,7 +18,7 @@ Projectile is required for the `noccur-project` function, but `noccur-dired` is 
 
 (Yes, this small project has one!)
 
-Damien Cassou http://damiencassou.seasidehosting.st/seaside
+Damien Cassou http://damiencassou.seasidehosting.st
 
 ## Usage example
 
