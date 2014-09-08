@@ -10,6 +10,12 @@ Run multi-occur on project/dired files
 Sometimes I just want to run `multi-occur` on all (or a subdirectory) of a project I'm working on. 
 Used with keyboard macros it makes it a snap to perform modifications on many buffers at once.
 
+## Installing
+
+It's available on [melpa](http://melpa.milkbox.net/):
+
+    M-x package-install js2-refactor
+
 ## Requirements
 
 Projectile is required for the `noccur-project` function, but `noccur-dired` is very similar and doesn't require it.
