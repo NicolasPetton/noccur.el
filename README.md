@@ -14,7 +14,7 @@ Used with keyboard macros it makes it a snap to perform modifications on many bu
 
 It's available on [melpa](http://melpa.milkbox.net/):
 
-    M-x package-install js2-refactor
+    M-x package-install noccir
 
 ## Requirements
 
