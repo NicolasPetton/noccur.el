@@ -16,10 +16,6 @@ It's available on [melpa](http://melpa.milkbox.net/):
 
     M-x package-install noccur
 
-## Requirements
-
-Projectile is required for the `noccur-project` function, but `noccur-dired` is very similar and doesn't require it.
-
 ## Contributors
 
 (Yes, this small project has one!)

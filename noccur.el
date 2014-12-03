@@ -4,9 +4,9 @@
 
 ;; Author: Nicolas Petton <petton.nicolas@gmail.com>
 ;; Keywords: convenience
-;; Version: 0.1
+;; Version: 0.2
 ;; Package: noccur
-;; Package-Requires: ((projectile "0.10.0"))
+;; Package-Requires: ()
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 ;; Sometimes I just want to run multi-occur on all (or a sub-directory)
 ;; of a project I'm working on.  Used with keyboard macros it makes it
 ;; a snap to perform modifications on many buffers at once.
-;; 
+;;
 ;; The way I use it is the following:
 
 ;; M-x noccur-project RET foo RET The occur buffer's content can then
@@ -36,8 +36,6 @@
 ;; modified buffer and go back to occur-mode press C-c C-c.
 
 ;;; Code:
-
-(require 'projectile)
 
 ;;;###autoload
 (defun noccur-dired (regexp &optional nlines)
@@ -49,18 +47,27 @@ When called with a prefix argument NLINES, display NLINES lines before and after
 ;;;###autoload
 (defun noccur-project (regexp &optional nlines)
   "Perform `multi-occur' with REGEXP in the current project files.
-When called with a prefix argument NLINES, display NLINES lines before and after."
+When called with a prefix argument NLINES, display NLINES lines before and after.
+
+For performance reasons, files are filtered using 'find' or 'git
+ls-files' and 'grep'."
   (interactive (occur-read-primary-args))
-  (let* ((directory (read-directory-name "Search in directory: "))
-         (files (if (and directory (not (string= directory (projectile-project-root))))
-                    (projectile-files-in-project-directory directory)
-                  (projectile-current-project-files)))
-         (buffers (mapcar #'find-file
-                          (mapcar #'(lambda (file)
-                                      (expand-file-name file (projectile-project-root)))
-                                  files))))
-    (multi-occur buffers regexp nlines)))
+  (let* ((default-directory (read-directory-name "Search in directory: "))
+         (files (mapcar #'find-file-noselect
+                        (goccur--find-files regexp))))
+    (multi-occur files regexp nlines)))
+
+(defun noccur--within-git-repository-p ()
+  (locate-dominating-file default-directory ".git"))
+
+(defun noccur--find-files (regexp)
+  (let* ((listing-command (if (goccur--within-git-repository-p)
+                              "git ls-files"
+                            "find . -type f"))
+         (command (format "%s | xargs grep -l \"%s\""
+                          listing-command
+                          regexp)))
+    (split-string (shell-command-to-string command) "\n")))
 
 (provide 'noccur)
-
 ;;; noccur.el ends here
