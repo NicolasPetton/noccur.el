@@ -54,14 +54,14 @@ ls-files' and 'grep'."
   (interactive (occur-read-primary-args))
   (let* ((default-directory (read-directory-name "Search in directory: "))
          (files (mapcar #'find-file-noselect
-                        (goccur--find-files regexp))))
+                        (noccur--find-files regexp))))
     (multi-occur files regexp nlines)))
 
 (defun noccur--within-git-repository-p ()
   (locate-dominating-file default-directory ".git"))
 
 (defun noccur--find-files (regexp)
-  (let* ((listing-command (if (goccur--within-git-repository-p)
+  (let* ((listing-command (if (noccur--within-git-repository-p)
                               "git ls-files"
                             "find . -type f"))
          (command (format "%s | xargs grep -l \"%s\""
