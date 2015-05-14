@@ -62,9 +62,9 @@ ls-files' and 'grep'."
 
 (defun noccur--find-files (regexp)
   (let* ((listing-command (if (noccur--within-git-repository-p)
-                              "git ls-files"
-                            "find . -type f"))
-         (command (format "%s | xargs grep -l \"%s\""
+                              "git ls-files -z"
+                            "find . -type f -print0"))
+         (command (format "%s | xargs -0 grep -l \"%s\""
                           listing-command
                           regexp)))
     (split-string (shell-command-to-string command) "\n")))

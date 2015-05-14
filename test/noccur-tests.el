@@ -25,7 +25,69 @@
 
 ;;; Code:
 
+(require 'noccur)
 (require 'ert)
+
+
+(ert-deftest filenames-with-spaces-without-git ()
+  "Test that filenames with spaces are correctly grep-ed, using 'find' command."
+  (let* ((root (expand-file-name (make-temp-name "noccur-")
+                                 temporary-file-directory))
+         (dir1  (expand-file-name "dir1"   root))
+         (file1 (expand-file-name "file1"  dir1))
+         (file2 (expand-file-name "file 2" dir1))
+         (dir2  (expand-file-name "dir 2"  root))
+         (file3 (expand-file-name "file3"  dir2))
+         (file4 (expand-file-name "file 4" dir2)))
+    (make-directory root)               ; create directory structure
+    (make-directory dir1)
+    (with-temp-file file1 (insert "happy"))
+    (with-temp-file file2 (insert "happier"))
+    (make-directory dir2)
+    (with-temp-file file3 (insert "unhappy"))
+    (with-temp-file file4 (insert "happiness"))
+    (cd root)                           ; change directory
+    (should
+     (equal
+      '("" "./dir 2/file 4" "./dir 2/file3" "./dir1/file 2" "./dir1/file1")
+      (sort (noccur--find-files "happ") 'string<)))
+    (should
+     (equal
+      '("" "./dir 2/file3" "./dir1/file1")
+      (sort (noccur--find-files "happy") 'string<)))
+    (delete-directory root t nil)))    ; clean recursively
+
+
+(ert-deftest filenames-with-spaces-with-git ()
+  "Test that filenames with spaces are correctly grep-ed, when under git."
+  (let* ((root (expand-file-name (make-temp-name "noccur-")
+                                 temporary-file-directory))
+         (dir1  (expand-file-name "dir1"   root))
+         (file1 (expand-file-name "file1"  dir1))
+         (file2 (expand-file-name "file 2" dir1))
+         (dir2  (expand-file-name "dir 2"  root))
+         (file3 (expand-file-name "file3"  dir2))
+         (file4 (expand-file-name "file 4" dir2)))
+    (make-directory root)               ; create directory structure
+    (make-directory dir1)
+    (with-temp-file file1 (insert "happy"))
+    (with-temp-file file2 (insert "happier"))
+    (make-directory dir2)
+    (with-temp-file file3 (insert "unhappy"))
+    (with-temp-file file4 (insert "happiness"))
+    (cd root)                           ; change directory
+    (shell-command "git init")          ; add to git
+    (shell-command "git add .")
+    (should
+     (equal
+      '("" "dir 2/file 4" "dir 2/file3" "dir1/file 2" "dir1/file1")
+      (sort (noccur--find-files "happ") 'string<)))
+    (should
+     (equal
+      '("" "dir 2/file3" "dir1/file1")
+      (sort (noccur--find-files "happy") 'string<)))
+    (delete-directory root t nil)))     ; clean recursively
+
 
 (provide 'noccur-tests)
 
