@@ -18,9 +18,8 @@ It's available on [melpa](http://melpa.milkbox.net/):
 
 ## Contributors
 
-(Yes, this small project has one!)
-
-Damien Cassou http://damiencassou.seasidehosting.st
+- [Damien Cassou](http://damiencassou.seasidehosting.st)
+- [thdox](https://github.com/thdox)
 
 ## Usage example
 
