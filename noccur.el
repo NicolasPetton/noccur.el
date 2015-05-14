@@ -54,16 +54,38 @@ ls-files' and 'grep'."
   (interactive (occur-read-primary-args))
   (let* ((default-directory (read-directory-name "Search in directory: "))
          (files (mapcar #'find-file-noselect
-                        (noccur--find-files regexp))))
+                        (noccur--find-files-project regexp))))
+    (multi-occur files regexp nlines)))
+
+;;;###autoload
+(defun noccur-directory (regexp &optional nlines)
+  "Perform `multi-occur' with REGEXP in the current directory (without recursion).
+When called with a prefix argument NLINES, display NLINES lines before and after.
+
+For performance reasons, files are filtered using 'find' or 'git
+ls-files' and 'grep'."
+  (interactive (occur-read-primary-args))
+  (let* ((default-directory (read-directory-name "Search in directory: "))
+         (files (mapcar #'find-file-noselect
+                        (noccur--find-files-directory regexp))))
     (multi-occur files regexp nlines)))
 
 (defun noccur--within-git-repository-p ()
   (locate-dominating-file default-directory ".git"))
 
-(defun noccur--find-files (regexp)
+(defun noccur--find-files-project (regexp)
   (let* ((listing-command (if (noccur--within-git-repository-p)
                               "git ls-files -z"
                             "find . -type f -print0"))
+         (command (format "%s | xargs -0 grep -l \"%s\""
+                          listing-command
+                          regexp)))
+    (split-string (shell-command-to-string command) "\n")))
+
+(defun noccur--find-files-directory (regexp)
+  (let* ((listing-command (if (noccur--within-git-repository-p)
+                              "ls | grep -f <(git ls-files) | tr \"\\n\" \"\\0\""
+                            "find . -type f -maxdepth 1 -print0"))
          (command (format "%s | xargs -0 grep -l \"%s\""
                           listing-command
                           regexp)))
