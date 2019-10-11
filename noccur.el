@@ -45,14 +45,16 @@ When called with a prefix argument NLINES, display NLINES lines before and after
   (multi-occur (mapcar #'find-file (dired-get-marked-files)) regexp nlines))
 
 ;;;###autoload
-(defun noccur-project (regexp &optional nlines)
+(defun noccur-project (regexp &optional nlines directory-to-search)
   "Perform `multi-occur' with REGEXP in the current project files.
 When called with a prefix argument NLINES, display NLINES lines before and after.
+If DIRECTORY-TO-SEARCH is specified, this directory will be searched recursively;
+otherwise, the user will be prompted to specify a directory to search.
 
 For performance reasons, files are filtered using 'find' or 'git
 ls-files' and 'grep'."
   (interactive (occur-read-primary-args))
-  (let* ((default-directory (read-directory-name "Search in directory: "))
+  (let* ((default-directory (or directory-to-search (read-directory-name "Search in directory: ")))
          (files (mapcar #'find-file-noselect
                         (noccur--find-files regexp))))
     (multi-occur files regexp nlines)))
