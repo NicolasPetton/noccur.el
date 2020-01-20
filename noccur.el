@@ -6,7 +6,7 @@
 ;; Keywords: convenience
 ;; Version: 0.2
 ;; Package: noccur
-;; Package-Requires: ()
+;; Package-Requires: ((emacs "24.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -69,7 +69,8 @@ ls-files' and 'grep'."
          (command (format "%s | xargs -0 grep -l \"%s\""
                           listing-command
                           regexp)))
-    (split-string (shell-command-to-string command) "\n")))
+    (cl-remove-if #'string-empty-p
+                  (split-string (shell-command-to-string command) "\n"))))
 
 (provide 'noccur)
 ;;; noccur.el ends here
