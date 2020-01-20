@@ -55,7 +55,15 @@ For performance reasons, files are filtered using 'find' or 'git
 ls-files' and 'grep'."
   (interactive (occur-read-primary-args))
   (let* ((default-directory (or directory-to-search (read-directory-name "Search in directory: ")))
-         (files (mapcar #'find-file-noselect
+         (files (mapcar (lambda (x)
+                          (or (find-buffer-visiting x)
+                              ;; Delay mode hooks when opening unvisited files
+                              (with-current-buffer (create-file-buffer x)
+                                (insert-file-contents x)
+                                (setq buffer-file-name x)
+                                (delay-mode-hooks (set-auto-mode))
+                                (set-buffer-modified-p nil)
+                                (current-buffer))))
                         (noccur--find-files regexp))))
     (multi-occur files regexp nlines)))
 
